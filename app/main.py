@@ -31,7 +31,7 @@ while True:
 
 @app.get("/")
 def root():
-    return {"message : Hello World"}
+    return {"message : Hello World Root"}
 
 
 app.include_router(post.router)
@@ -39,5 +39,6 @@ app.include_router(user.router)
 app.include_router(auth.router)
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True,
-                debug=True, workers=3)
+    # uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True,
+    #             debug=True, workers=3)
+    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True, workers=5)

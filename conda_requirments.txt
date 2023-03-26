@@ -1,0 +1,7 @@
+conda create -n myenv python=3.9
+pip install "fastapi[all]"
+pip install "uvicorn[standard]"
+pip install sqlalchemy
+pip install "python-jose[cryptography]"
+pip install "passlib[bcrypt]"
+pip install psycopg2

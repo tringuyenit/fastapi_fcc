@@ -40,7 +40,8 @@ def get_post(id: int, db: Session = Depends(get_db), user: models.User = Depends
 
 @router.post("/", status_code=status.HTTP_201_CREATED,
              response_model=schemas.Post)
-def create_post(post: schemas.PostCreate, db: Session = Depends(get_db), user_id: int = Depends(oauth2.get_current_user)):
+def create_post(post: schemas.PostCreate, db: Session = Depends(get_db),
+                current_user: models.User = Depends(oauth2.get_current_user)):
     # cursor.execute("""
     # INSERT INTO posts (title, content, published) VALUES
     # (%s, %s, %s)
@@ -54,7 +55,7 @@ def create_post(post: schemas.PostCreate, db: Session = Depends(get_db), user_id
 
     # new_post = models.Post(title=post.title, content=post.content, published=post.published)
 
-    new_post = models.Post(**post.dict())
+    new_post = models.Post(owner_id=current_user.id, **post.dict())
     db.add(new_post)
     db.commit()
     db.refresh(new_post)
@@ -63,7 +64,7 @@ def create_post(post: schemas.PostCreate, db: Session = Depends(get_db), user_id
 
 
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_post(id: int, db: Session = Depends(get_db), user_id: int = Depends(oauth2.get_current_user)):
+def delete_post(id: int, db: Session = Depends(get_db), current_user: models.User = Depends(oauth2.get_current_user)):
     # cursor.execute("""
     # DELETE FROM posts
     # WHERE id = %s RETURNING *
@@ -72,19 +73,25 @@ def delete_post(id: int, db: Session = Depends(get_db), user_id: int = Depends(o
     # conn.commit()
     # deleted_post = cursor.fetchone()
 
-    deleted_post = db.query(models.Post).filter(models.Post.id == id)
-    if deleted_post.first() is None:
+    deleted_post_query = db.query(models.Post).filter(models.Post.id == id)
+
+    deleted_post = deleted_post_query.first()
+    if deleted_post is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"post with id {id} does not exits")
 
-    deleted_post.delete(synchronize_session=False)
+    if deleted_post.owner_id != current_user.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                            detail=f"Not authorized to perform requested action")
+
+    deleted_post_query.delete(synchronize_session=False)
     db.commit()
     return {"message": "post was successfully deleted"}
 
 
 @router.put("/{id}", response_model=schemas.Post)
 def update_post(id: int, post: schemas.PostCreate,
-                db: Session = Depends(get_db), user_id: int = Depends(oauth2.get_current_user)):
+                db: Session = Depends(get_db), current_user: models.User = Depends(oauth2.get_current_user)):
     # cursor.execute("""
     # UPDATE posts SET title = %s, content = %s, published = %s
     # WHERE id = %s
@@ -100,6 +107,10 @@ def update_post(id: int, post: schemas.PostCreate,
     if updated_post is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"post with id {id} does not exits")
+
+    if updated_post.owner_id != current_user.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                            detail=f"Not authorized to perform requested action")
 
     updated_query.update(post.dict(), synchronize_session=False)
 
