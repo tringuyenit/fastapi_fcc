@@ -5,3 +5,18 @@ pip install sqlalchemy
 pip install "python-jose[cryptography]"
 pip install "passlib[bcrypt]"
 pip install psycopg2
+pip install pydantic[dotenv]
+pip install alembic
+
+cd fastapi_fcc
+alembic init lembic
+inside alembic/env.py
+    add
+        from app.model import Base ???
+        from app.config import settings
+        config.set_main_option("sqlalchemy.url",
+                       f"postgresql://{settings.database_username}:{settings.database_password}@{settings.database_hostname}:{settings.database_port}/{settings.database_name}")
+    change
+        target_metadata = None
+        to
+        target_metadata = Base.metadata

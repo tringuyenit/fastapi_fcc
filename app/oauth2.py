@@ -10,11 +10,17 @@ from fastapi.security import OAuth2PasswordBearer
 from app import models
 from app.database import get_db
 
+from config import settings
+
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login")
 
-SECRET_KEY = "50753f7b75aaff03a82e96c8eed87b7e3325bb46de1def9df11fc2c2d411108a"
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTE = 1
+# SECRET_KEY = "50753f7b75aaff03a82e96c8eed87b7e3325bb46de1def9df11fc2c2d411108a"
+# ALGORITHM = "HS256"
+# ACCESS_TOKEN_EXPIRE_MINUTE = 10
+
+SECRET_KEY = f"{settings.secret_key}"
+ALGORITHM = f"{settings.algorithm}"
+ACCESS_TOKEN_EXPIRE_MINUTE = settings.access_token_expire_minutes
 
 
 def create_access_token(data: dict):

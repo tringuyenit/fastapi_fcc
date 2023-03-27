@@ -1,3 +1,5 @@
+from sqlalchemy.orm import relationship
+
 from database import Base
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
 from sqlalchemy.sql.sqltypes import TIMESTAMP
@@ -16,6 +18,8 @@ class Post(Base):
 
     owner_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
 
+    owner = relationship("app.models.User")
+
 
 class User(Base):
     __tablename__ = "users"
@@ -26,3 +30,10 @@ class User(Base):
     password = Column(String, nullable=False)
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text("NOW()"))
 
+
+class Vote(Base):
+    __tablename__ = "votes"
+    __table_args__ = {'extend_existing': True}
+
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), primary_key=True, nullable=False)
+    post_id = Column(Integer, ForeignKey("posts.id", ondelete="CASCADE"), primary_key=True, nullable=False)
