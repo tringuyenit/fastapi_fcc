@@ -1,13 +1,30 @@
 import uvicorn
 from fastapi import FastAPI
-
-import models
-from database import engine
 from routers import post, user, auth, vote
-from config import settings
+from fastapi.middleware.cors import CORSMiddleware
 
-models.Base.metadata.create_all(bind=engine)
+# import models
+# from database import engine
+# from config import settings
+# models.Base.metadata.create_all(bind=engine)
+# # don't need auto update tables
+# # using sqlalchemy (not good) because
+# # we have alembic
+
 app = FastAPI()
+origins = [
+    "https://www.google.com",
+    "http://localhost",
+    "http://localhost:8080",
+]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],  # HTTP methods allowed
+    allow_headers=["*"],  # HTTP headers allowed
+)
+# middlewares are fuctions run before every requests
 
 app.include_router(post.router)
 app.include_router(user.router)
