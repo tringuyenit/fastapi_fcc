@@ -4,13 +4,13 @@ from datetime import datetime, timedelta
 
 from sqlalchemy.orm import Session
 
-import schemas
+import app.schemas
 from fastapi.security import OAuth2PasswordBearer
 
 from app import models
 from app.database import get_db
 
-from config import settings
+from app.config import settings
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login")
 

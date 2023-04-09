@@ -13,9 +13,9 @@ from fastapi.middleware.cors import CORSMiddleware
 
 # app = FastAPI()
 app = FastAPI(title='slow API',
-              docs_url='/flower1/docs',
-              redoc_url='/flower1/redoc',
-              openapi_url='/flower1/openapi.json')
+              docs_url='/flower2/docs',
+              redoc_url='/flower2/redoc',
+              openapi_url='/flower2/openapi.json')
 origins = [
     "https://www.google.com",
     "http://localhost",
@@ -42,6 +42,6 @@ def root():
 
 
 if __name__ == "__main__":
-    # uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True,
+    # uvicorn.run("main:app", host="127.0.0.1", port=8001, reload=True,
     #             debug=True, workers=3)
-    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True, workers=5)
+    uvicorn.run("main:app", host="127.0.0.1", port=8001, reload=True, workers=5)
