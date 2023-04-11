@@ -11,11 +11,11 @@ from fastapi.middleware.cors import CORSMiddleware
 # # using sqlalchemy (not good) because
 # # we have alembic
 
-# app = FastAPI()
-app = FastAPI(title='slow API',
-              docs_url='/flower1/docs',
-              redoc_url='/flower1/redoc',
-              openapi_url='/flower1/openapi.json')
+app = FastAPI()
+# app = FastAPI(title='slow API',
+#               docs_url='/docs',
+#               redoc_url='/redoc',
+#               openapi_url='/openapi.json')
 origins = [
     "https://www.google.com",
     "http://localhost",

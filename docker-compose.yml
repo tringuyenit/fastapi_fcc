@@ -1,6 +1,24 @@
 version: "3"
 
 services:
+  nginx:
+    build: ./nginx_docker
+    depends_on:
+      - api
+    ports:
+      - "8069:80"
+  traefik:
+    somehow:
+      - load api1://8000
+      - load ap2://8000
+  api1:
+    image: api
+    ports:
+      - 8001:8000
+  api2:
+    image: api
+    ports:
+      - 8002:8000
   api:
     build: .
     depends_on:
